@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Магазин</title>
+</head>
+
+<body>
+
+    <h1>Список продуктов</h1>
+
+    <div>
+        <br>
+        <h3>Сортировать продукты:</h3>
+        <form method="get">
+            <label>Больше минимальной цены</label><input type="radio" name="sort_method" value="fromMin"><br>
+            <label>Меньше максимальной цены</label><input type="radio" name="sort_method" value="toMax"><br>
+            <label>Между минимальной и максимальной ценой</label><input type="radio" name="sort_method" value="fromMinToMax"><br>
+
+            <label>min</label><input type="number" name="min" value=""/><br>
+            <label>max</label><input type="number" name="max" value=""/><br>
+            <input type="submit" value="Отправить">
+        </form>
+    </div>
+
+    <div>
+        <br>
+        <h3>Добавить новый продукт:</h3>
+        <form th:action="@{/products}" th:object="${newProduct}" method="post">
+            <label>Название</label><input type="text" th:field="*{title}" name="title" /><br>
+            <label>Цена</label><input type="number" th:field="*{price}" name="price" /><br>
+            <input type="submit" value="Добавить">
+        </form>
+    </div>
+
+    <a href="products/delete">Удалить продукт по id</a>
+
+    <div>
+        <p th:each="product : ${productList}">[[${product.id}]] [[${product.title}]] - [[${product.price}]] р</p>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Магазин</title>
+</head>
+
+<body>
+
+    <h1>Список продуктов</h1>
+
+    <div >
+        <br>
+        <h3>Удалить продукт по id:</h3>
+        <form method="get">
+            <label>id</label><input type="number" name="id" /><br>
+            <input type="submit" value="Удалить">
+        </form>
+    </div>
+
+    <div>
+        <p th:each="product : ${productList}">[[${product.id}]] [[${product.title}]] - [[${product.price}]] р</p>
+    </div>
+
+</body>
+</html>
