@@ -5,22 +5,34 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>Магазин</title>
+    <link type="text/css" rel="stylesheet" th:href="@{/css/styles.css}"/>
 </head>
 
 <body>
 
-    <h1>Список продуктов</h1>
+<div class="container">
+    <!--    <div th:replace="~{navigation :: navi(Shop)}"/>-->
 
+    <div>
+        <ul class="navbar">
+            <li><a href="/shop/products">Список всех продуктов</a></li>
+        </ul>
+    </div>
+    <h1>Список продуктов</h1>
     <div>
         <br>
         <h3>Сортировать продукты:</h3>
-        <form method="get">
-            <label>Больше минимальной цены</label><input type="radio" name="sort_method" value="fromMin"><br>
-            <label>Меньше максимальной цены</label><input type="radio" name="sort_method" value="toMax"><br>
-            <label>Между минимальной и максимальной ценой</label><input type="radio" name="sort_method" value="fromMinToMax"><br>
+        <form method="get" th:action="@{/shop/products(sort_method=${sort_method},
+                                                             min=${min},
+                                                             max=${max},
+                                                             size=${size},
+                                                             page=${pageNumber})}">
+            <label>Больше минимальной цены</label><input type="radio" th:checked="(${sort_method} == 'fromMin')" name="sort_method" value="fromMin"/><br>
+            <label>Меньше максимальной цены</label><input type="radio" th:checked="(${sort_method} == 'toMax')" name="sort_method" value="toMax"><br>
+            <label>Между минимальной и максимальной ценой</label><input type="radio" th:checked="(${sort_method} == 'fromMinToMax')" name="sort_method" value="fromMinToMax"><br>
 
-            <label>min</label><input type="number" name="min" value=""/><br>
-            <label>max</label><input type="number" name="max" value=""/><br>
+            <label>min</label><input type="number" name="min" th:value="${min}"/><br>
+            <label>max</label><input type="number" name="max" th:value="${max}"/><br>
             <input type="submit" value="Отправить">
         </form>
     </div>
@@ -28,17 +40,54 @@
     <div>
         <br>
         <h3>Добавить новый продукт:</h3>
-        <form th:action="@{/products}" th:object="${newProduct}" method="post">
-            <label>Название</label><input type="text" th:field="*{title}" name="title" /><br>
-            <label>Цена</label><input type="number" th:field="*{price}" name="price" /><br>
+        <form th:action="@{/shop/products(sort_method=${sort_method},
+                                                             min=${min},
+                                                             max=${max},
+                                                             size=${size},
+                                                             page=${pageNumber})}"
+              th:object="${newProduct}" method="post">
+            <label>Название</label><input type="text" th:field="*{title}" /><br>
+            <label>Цена</label><input type="number" th:field="*{price}" /><br>
             <input type="submit" value="Добавить">
         </form>
     </div>
 
-    <a href="products/delete">Удалить продукт по id</a>
+    <div class="column">
+        <table>
+            <thead>
+            <tr>
+                <th>id</th>
+                <th>Название товара</th>
+                <th>Цена</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="product, iStat : ${productPage.content}"
+                th:style="${iStat.odd}? 'font-weight: bold;'"
+                th:alt-title="${iStat.even}? 'even' : 'odd'">
 
-    <div>
-        <p th:each="product : ${productList}">[[${product.id}]] [[${product.title}]] - [[${product.price}]] р</p>
+                <td th:text="${product.id}"/>
+                <td th:text="${product.title}"/>
+                <td th:text="${product.price}"/>
+                <td>
+                    <a class="delete_button" th:href="@{'/shop/products/delete/' + ${product.id}}" role="button">Удалить</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="pages">
+            <div th:if="${productPage.totalPages > 0}" class="pagination"
+                 th:each="pageNumber : ${pageNumbers}">
+                <a th:href="@{/shop/products(sort_method=${sort_method},
+                                                                 min=${min},
+                                                                 max=${max},
+                                                                 size=${size},
+                                                                 page=${pageNumber})}"
+                   th:text=${pageNumber}
+                   th:class="${pageNumber==productPage.number + 1} ? active"></a>
+            </div>
+        </div>
+    </div>
     </div>
 
 </body>
