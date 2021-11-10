@@ -3,6 +3,7 @@ package ru.vorobyov.shop.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.vorobyov.shop.entities.Product;
+import org.springframework.data.domain.*;
 import ru.vorobyov.shop.repositories.ProductRepository;
 import java.util.List;
 
@@ -12,25 +13,25 @@ public class ProductService {
 
     @Autowired
     private ProductRepository productRepository;
-    
-    public List<Product> fromMin(double min) {
-        return productRepository.findByPriceAfter(min);
+
+    public Page<Product> fromMin(double min, Pageable pageable) {
+        return productRepository.findByPriceGreaterThanEqual(min, pageable);
     }
 
-    public List<Product> toMax(double max) {
-        return productRepository.findByPriceBefore(max);
+    public Page<Product> toMax(double max, Pageable pageable) {
+        return productRepository.findByPriceBefore(max, pageable);
     }
 
-    public List<Product> fromMinToMax(double min, double max) {
-        return productRepository.findByPriceAfterAndPriceBefore(min, max);
+    public Page<Product> fromMinToMax(double min, double max, Pageable pageable) {
+        return productRepository.findByPriceBetween(min, max, pageable);
     }
-    
-    public List<Product> findById (long id) {
-        return productRepository.findById(id);
+
+    public Page<Product> findById(long id, Pageable pageable) {
+        return productRepository.findById(id, pageable);
     }
-    
-    public List<Product> findAll () {
-        return productRepository.findAll();
+
+    public Page<Product> findAll(Pageable pageable) {
+        return productRepository.findAll(pageable);
     }
     
     public void add(Product newProduct) {
